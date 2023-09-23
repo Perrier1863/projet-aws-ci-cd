@@ -45,6 +45,11 @@ On intialise git dans le repertoire que l'on veut versionner :
 ```bash
 git init
 ```
+On configure son nom et son adresse electronique pour commencer à utiliser git : 
+```bash
+git config --global user.name "FIRST_NAME LAST_NAME"
+git config --global user.email "MY_NAME@example.com"
+```
 On indique à git qu'il doit gèrer les version de l'ensemble du repertoire actuel :
 
 ```bash
@@ -57,6 +62,19 @@ git commit -a -m "premier commit"
 On selectionne la branche master pour git :
 ```bash
 git branch -M master
+```
+Il faudra bien évidemment configurer son nom et son adresse electronique pour pouvoir lancer git 
+## Git distant 
+En plus du git local, nous pouvons mettre en place un git distant sur un répertoire, pour ce faire il suffit de créer une clef de déploiement sur notre machine linux
+```bash
+ssh-keygen -t ed25519 -C "your_email@example.com"
+```
+On indique les renseignements demandé et l'on récupère ensuite la clef pour la placer sur git : Settings -> Deploy Keys 
+
+On retourne ensuite sur la machine Linux pour finir la configuration :
+```bash
+git branch -M master
+git push -u origin master
 ```
 
 ## Ressources Expliquées
@@ -87,5 +105,7 @@ git branch -M master
 - `web.sh` : Script pour l'installation des serveurs web `httpd` et leurs attachements au `Squid`.
 - `squid.sh` : Script pour l'installation du proxy `squid`, et sa configuration.
 - `rproxy.tpl` : Script pour l'installation du reverse proxy `haproxy` et la configuration pour qu'il fait du round-robin vers les 3 serveurs web.
+
+
 
 ---
