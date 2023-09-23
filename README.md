@@ -17,7 +17,7 @@ Le template projet inclut la mise en place d'un VPC, de 4 sous-réseaux (1 publi
 ### Étapes Jenkins
 1. Pour chaque script dans le dossier /Jenkins/ créer un job avec les propres variables et scripts.
 
-2. Pour lancer un job cliquez `Build with parameters` et rensignez les parameters que vous voulez (choisir template et nommer le projet).
+2. Pour lancer un job cliquez `Build with parameters` et renseignez les paramètres que vous voulez (choisir template et nommer le projet).
 
 3. Lancer le Job en cliquant `Build`.
 ### Étapes Terraform
@@ -37,7 +37,7 @@ sed -i 's/us-east-1/eu-west-1/g' /var/jenkins_home/Terraform/TEMPLATES/PROJET/ma
 
 ## Ressources Expliquées
 
-### Réseautage
+### Partie Réseai
 
 - **aws_vpc.INFRANAME-VPC-ABG** : Virtual Private Cloud pour isoler le réseau.
 - **aws_subnet** (privé): Sous-réseaux pour isoler les machines web.
