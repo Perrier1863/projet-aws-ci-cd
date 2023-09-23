@@ -8,12 +8,16 @@ terraform {
 provider "aws" {
         region = "us-east-1"
 }
+#Création VPC
 resource "aws_vpc" "INFRANAME-VPC-ABG" {
         cidr_block = "10.0.0.0/16"
         tags = {
                 Name = "INFRANAME-VPC-ABG"
         }
 }
+### Création des subnets ###
+
+# Subnet Public
 resource "aws_subnet" "INFRANAME-SUBNET-PUBLIC-ABG" {
         vpc_id = "${aws_vpc.INFRANAME-VPC-ABG.id}"
         cidr_block = "10.0.1.0/24"
@@ -21,6 +25,7 @@ resource "aws_subnet" "INFRANAME-SUBNET-PUBLIC-ABG" {
                 Name = "INFRANAME-SUBNET-PUBLIC-ABG"
         }
 }
+#Subnet Web A
 resource "aws_subnet" "INFRANAME-SUBNET-WEB-A-ABG" {
         vpc_id = "${aws_vpc.INFRANAME-VPC-ABG.id}"
         cidr_block = "10.0.2.0/24"
@@ -28,6 +33,7 @@ resource "aws_subnet" "INFRANAME-SUBNET-WEB-A-ABG" {
                 Name = "INFRANAME-SUBNET-WEB-A-ABG"
         }
 }
+#Subnet Web B
 resource "aws_subnet" "INFRANAME-SUBNET-WEB-B-ABG" {
         vpc_id = "${aws_vpc.INFRANAME-VPC-ABG.id}"
         cidr_block = "10.0.3.0/24"
@@ -35,6 +41,7 @@ resource "aws_subnet" "INFRANAME-SUBNET-WEB-B-ABG" {
                 Name = "INFRANAME-SUBNET-WEB-B-ABG"
         }
 }
+#Subnet Web C
 resource "aws_subnet" "INFRANAME-SUBNET-WEB-C-ABG" {
         vpc_id = "${aws_vpc.INFRANAME-VPC-ABG.id}"
         cidr_block = "10.0.4.0/24"
@@ -42,15 +49,18 @@ resource "aws_subnet" "INFRANAME-SUBNET-WEB-C-ABG" {
                 Name = "INFRANAME-SUBNET-WEB-C-ABG"
         }
 }
+# Création de l'internet gateway 
 resource "aws_internet_gateway" "INFRANAME-IGW-ABG" {
         tags = {
                 Name = "INFRANAME-IGW-ABG"
         }
 }
+# Attache de l'internet gateway au VPC 
 resource "aws_internet_gateway_attachment" "INFRANAME-IGW-ATTACH-ABG" {
         vpc_id = "${aws_vpc.INFRANAME-VPC-ABG.id}"
         internet_gateway_id = "${aws_internet_gateway.INFRANAME-IGW-ABG.id}"
 }
+# Création de la table de routage pour le réseau public
 resource "aws_route_table" "INFRANAME-RTB-PUBLIC-ABG" {
         vpc_id = "${aws_vpc.INFRANAME-VPC-ABG.id}"
         route {
@@ -71,22 +81,27 @@ resource "aws_route_table" "INFRANAME-RTB-WEB-ABG" {
                 Name = "INFRANAME.RTB-WEB-ABG"
         }
 }
+# Association de la table de routage au subnet web A
 resource "aws_route_table_association" "INFRANAME-RTB-WEB-A-ASSOC-ABG" {
         subnet_id = "${aws_subnet.INFRANAME-SUBNET-WEB-A-ABG.id}"
         route_table_id = "${aws_route_table.INFRANAME-RTB-WEB-ABG.id}"
 }
+# Association de la table de routage au subnet web B
 resource "aws_route_table_association" "INFRANAME-RTB-WEB-B-ASSOC-ABG" {
         subnet_id = "${aws_subnet.INFRANAME-SUBNET-WEB-B-ABG.id}"
         route_table_id = "${aws_route_table.INFRANAME-RTB-WEB-ABG.id}"
 }
+# Association de la table de routage au subnet web C
 resource "aws_route_table_association" "INFRANAME-RTB-WEB-C-ASSOC-ABG" {
         subnet_id = "${aws_subnet.INFRANAME-SUBNET-WEB-C-ABG.id}"
         route_table_id = "${aws_route_table.INFRANAME-RTB-WEB-ABG.id}"
 }
+# Association de la table de routage au subnet web Public
 resource "aws_route_table_association" "INFRANAME-RTB-PUBLIC-ASSOC-ABG" {
         subnet_id = "${aws_subnet.INFRANAME-SUBNET-PUBLIC-ABG.id}"
         route_table_id = "${aws_route_table.INFRANAME-RTB-PUBLIC-ABG.id}"
 }
+# Création du GRP-SECU PUBLIC
 resource "aws_security_group" "INFRANAME-SG-PUBLIC-ABG" {
         vpc_id = "${aws_vpc.INFRANAME-VPC-ABG.id}"
         ingress {
@@ -105,6 +120,7 @@ resource "aws_security_group" "INFRANAME-SG-PUBLIC-ABG" {
                 Name = "INFRANAME-SG-PUBLIC-ABG"
         }
 }
+# Création du GRP-SECU SQUID
 resource "aws_security_group" "INFRANAME-SG-SQUID-ABG" {
         vpc_id = "${aws_vpc.INFRANAME-VPC-ABG.id}"
         ingress {
@@ -129,6 +145,7 @@ resource "aws_security_group" "INFRANAME-SG-SQUID-ABG" {
                 Name = "INFRANAME-SG-SQUID-ABG"
         }
 }
+# Création du GRP-SECU Admin
 resource "aws_security_group" "INFRANAME-SG-ADMIN-ABG" {
         vpc_id = "${aws_vpc.INFRANAME-VPC-ABG.id}"
         ingress {
@@ -153,6 +170,7 @@ resource "aws_security_group" "INFRANAME-SG-ADMIN-ABG" {
                 Name = "INFRANAME-SG-ADMIN-ABG"
         }
 }
+# Création du GRP-SECU WEB
 resource "aws_security_group" "INFRANAME-SG-WEB-ABG" {
         vpc_id = "${aws_vpc.INFRANAME-VPC-ABG.id}"
         ingress {
@@ -183,6 +201,7 @@ resource "aws_security_group" "INFRANAME-SG-WEB-ABG" {
                 Name = "INFRANAME-SG-WEB-ABG"
         }
 }
+# INSTANCE SQUID
 resource "aws_instance" "INFRANAME-INSTANCE-SQUID-ABG" {
         subnet_id = "${aws_subnet.INFRANAME-SUBNET-PUBLIC-ABG.id}"
         instance_type = "t2.micro"
@@ -195,6 +214,7 @@ resource "aws_instance" "INFRANAME-INSTANCE-SQUID-ABG" {
         }
         user_data = file("squid.sh")
 }
+# INSTANCE PROXY
 resource "aws_instance" "INFRANAME-INSTANCE-PUBLIC-ABG" {
         subnet_id = "${aws_subnet.INFRANAME-SUBNET-PUBLIC-ABG.id}"
         instance_type = "t2.micro"
@@ -218,6 +238,7 @@ resource "aws_instance" "INFRANAME-INSTANCE-ADMIN-ABG" {
                 Name = "INFRANAME-INSTANCE-ADMIN-ABG"
         }
 }
+# INSTANCE WEB A
 resource "aws_instance" "INFRANAME-INSTANCE-WEB-A-ABG" {
         subnet_id = "${aws_subnet.INFRANAME-SUBNET-WEB-A-ABG.id}"
         instance_type = "t2.micro"
@@ -231,6 +252,7 @@ resource "aws_instance" "INFRANAME-INSTANCE-WEB-A-ABG" {
         user_data = "${templatefile("web.sh", { SQUID_IP = "${aws_instance.INFRANAME-INSTANCE-SQUID-ABG.private_ip}" })}"
 
 }
+# INSTANCE WEB B
 resource "aws_instance" "INFRANAME-INSTANCE-WEB-B-ABG" {
         subnet_id = "${aws_subnet.INFRANAME-SUBNET-WEB-B-ABG.id}"
         instance_type = "t2.micro"
@@ -244,6 +266,7 @@ resource "aws_instance" "INFRANAME-INSTANCE-WEB-B-ABG" {
         user_data = "${templatefile("web.sh", { SQUID_IP = "${aws_instance.INFRANAME-INSTANCE-SQUID-ABG.private_ip}" })}"
 
 }
+# INSTANCE WEB C
 resource "aws_instance" "INFRANAME-INSTANCE-WEB-C-ABG" {
         subnet_id = "${aws_subnet.INFRANAME-SUBNET-WEB-C-ABG.id}"
         instance_type = "t2.micro"
