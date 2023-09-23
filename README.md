@@ -1,4 +1,4 @@
-# Projet d'Infrastructure AWS avec Terraform via Jenkins
+# Projet d'Infrastructure AWS avec Terraform
 
 ## Introduction
 
@@ -72,6 +72,16 @@ ssh-keygen -t ed25519 -C "your_email@example.com"
 On indique les renseignements demandé et l'on récupère ensuite la clef pour la placer sur git : Settings -> Deploy Keys 
 
 On retourne ensuite sur la machine Linux pour finir la configuration :
+On commence par démarrer l'agent SSH :
+```bash
+$ eval "$(ssh-agent -s)"
+> Agent pid 59566
+```
+On ajoute la clef privée à l'agent ssh :
+```bash
+ssh-add ~/.ssh/id_ed25519
+```
+Puis on push les données sur le répertoire distant :
 ```bash
 git branch -M master
 git push -u origin master
@@ -95,7 +105,7 @@ git push -u origin master
 - **aws_security_group.INFRANAME-SG-WEB-ABG** : Groupe de sécurité pour les instances `web`.
 
 ### Instances
-
+Pour pouvoir accèder aux instances à distance il faudra générer une keypair via AWS
 - **aws_instance.INFRANAME-INSTANCE-SQUID-ABG** : Instance exécutant un proxy `Squid` pour gérer les connexions sortantes.
 - **aws_instance.INFRANAME-INSTANCE-PUBLIC-ABG** : Instance exécutant un reverse proxy `haproxy`.
 - **aws_instance.INFRANAME-INSTANCE-ADMIN-ABG** : Instance administrative pour la gestion et accés `SSH`.
@@ -106,6 +116,8 @@ git push -u origin master
 - `squid.sh` : Script pour l'installation du proxy `squid`, et sa configuration.
 - `rproxy.tpl` : Script pour l'installation du reverse proxy `haproxy` et la configuration pour qu'il fait du round-robin vers les 3 serveurs web.
 
+## Partie ACTUAL_INFRA.csv
 
+Non effectuée par manque de temps 
 
 ---
